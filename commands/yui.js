@@ -10,16 +10,13 @@ module.exports = {
       (value) => {
         interaction.createMessage({
           embeds: [{
-            title: "**Random photo of me~**",
+            title: "**Photo of me.**",
             image: {
               url: `https://funamibot.s3.eu-central-2.amazonaws.com/${value}`
             }
           }]
         });
       }
-    )
-    .catch(err => {
-      console.log(err);
-    });
+    );
   }
 }

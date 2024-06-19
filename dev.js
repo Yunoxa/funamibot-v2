@@ -6,16 +6,17 @@ const Constants = Eris.Constants;
 
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
-const bot = new Eris(`Bot ${process.env.TOKEN}`, {
+const bot = new Eris(`Bot ${process.env.TESTTOKEN}`, {
   intents: []
 });
 
 bot.on("ready", async () => {
   console.log("Ready!");
 
+  const testGuildID = process.env.GUILDID;
   for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
-    await bot.createCommand({
+    await bot.createGuildCommand(testGuildID, {
       name: command.name,
       description: command.options.description,
       type: Constants.ApplicationCommandTypes.CHAT_INPUT

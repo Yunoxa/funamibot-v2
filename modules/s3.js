@@ -16,7 +16,7 @@ async function getRandomS3Object(bucket, folder) {
   });
 
   console.log("Sending request for objects to S3...")
-  const response = await client.send(command);
+  const response = await client.send(command).catch(err => console.error(err));
   console.log(`Objects recieved from ${folder} folder in ${bucket} bucket.`)
 
   let objects = [];
