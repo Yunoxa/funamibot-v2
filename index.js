@@ -17,8 +17,9 @@ bot.on("ready", async () => {
     const command = require(`./commands/${file}`);
     await bot.createCommand({
       name: command.name,
-      description: command.options.description,
-      type: Constants.ApplicationCommandTypes.CHAT_INPUT
+      description: command.description,
+      type: Constants.ApplicationCommandTypes.CHAT_INPUT,
+      options: command.options
     });
   }
 
@@ -30,8 +31,9 @@ bot.on("interactionCreate", (interaction) => {
     for (const file of commandFiles) {
       const command = require(`./commands/${file}`);
       if (interaction.data.name == command.name) {
-        console.log(`I executed the ${interaction.data.name} command.`);
+        console.log(`Executing the ${interaction.data.name} command...`);
         command.generator(interaction);
+        console.log(`I've finished executing the ${interaction.data.name} command!`);
       }
     }
   }

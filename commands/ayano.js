@@ -1,8 +1,6 @@
 module.exports = {
   name: "ayano",
-  options: {
-    description: "I'll post a random image of Ayano",
-  },
+  description: "I'll post a random image of Ayano",
   generator(interaction) {
     const s3Tools = require("../modules/s3");
 
