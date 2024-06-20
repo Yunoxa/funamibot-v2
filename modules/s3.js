@@ -19,7 +19,7 @@ async function getRandomS3Object(bucket, folder) {
   const response = await client.send(command).catch(err => console.error(err));
   console.log(`Objects recieved from ${folder} folder in ${bucket} bucket.`)
 
-  let objects = [];
+  const objects = [];
   response.Contents.forEach(item => {
     objects.push(item.Key);
   });
