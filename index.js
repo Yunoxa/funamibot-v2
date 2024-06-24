@@ -26,13 +26,13 @@ bot.on("ready", async () => {
   console.log("Commands loaded.");
 });
 
-bot.on("interactionCreate", (interaction) => {
+bot.on("interactionCreate", async (interaction) => {
   if (interaction instanceof Eris.CommandInteraction) {
     for (const file of commandFiles) {
       const command = require(`./commands/${file}`);
       if (interaction.data.name == command.name) {
         console.log(`Executing the ${interaction.data.name} command...`);
-        command.generator(interaction);
+        await command.generator(interaction);
         console.log(`I've finished executing the ${interaction.data.name} command!`);
       }
     }
