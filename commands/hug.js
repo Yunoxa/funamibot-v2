@@ -12,21 +12,19 @@ module.exports = {
       "required": true
     }
   ],
-  generator(interaction) {
+  async generator(interaction) {
     const user = interaction.data.options[0].value;
 
     const s3Tools = require("../modules/s3");
-    s3Tools.getRandomS3Object("funamibot", "hugGifs/").then(
-      (value) => {
-        interaction.createMessage({
-          embeds: [{
-            description: `${interaction.member.mention} hugs <@!${user}>`,
-            image: {
-              url: `https://funamibot.s3.eu-central-2.amazonaws.com/${value}`
-            }
-          }]
-        });
-      }
-    );
+    const randObj = await s3Tools.getRandomS3Object("funamibot", "hugGifs/");
+    console.log(randObj);
+    interaction.createMessage({
+      content: `${interaction.member.mention} hugs <@!${user}>`,
+      embeds: [{
+        image: {
+          url: `https://funamibot.s3.eu-central-2.amazonaws.com/${randObj}`
+        }
+      }]
+    });
   }
 }
