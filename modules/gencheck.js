@@ -10,8 +10,7 @@ async function checkGeneratorType(interaction) {
       const generator = require(`./sentence_generation/${file}`);
 
       if(generator.name === interaction.data.options[0].value) {
-        const sentence = await generator.getRandomSentence();
-        console.log(sentence);
+        const sentence = await generator.getRandomSentence(interaction);
         return sentence;
       }
     }

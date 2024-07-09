@@ -14,6 +14,10 @@ module.exports = {
         {
           "name": "SentenceRand",
           "value": "sentencerand"
+        },
+        {
+          "name": "SentenceSuperRand",
+          "value": "sentencesuperrand"
         }
       ]
     }
