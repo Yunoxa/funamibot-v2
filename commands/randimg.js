@@ -12,8 +12,8 @@ module.exports = {
       "required": false,
       "choices": [
         {
-          "name": "SuperRandom",
-          "value": "superRand"
+          "name": "SentenceRand",
+          "value": "sentenceRand"
         },
         {
           "name": "KindaRandom",
@@ -22,14 +22,20 @@ module.exports = {
       ]
     }
   ],
-  generator(interaction) {
+  async generator(interaction) {
     const s3Tools = require("../modules/s3");
-    s3Tools.getRandomS3Object("funamibot", "zother/").then(
+    const sentenceRand = require("../modules/sentence_generation/sentencerand");
+    console.log(interaction.value)
+
+    const randomSentence = await sentenceRand.getRandomSentence();
+    console.log("Random sentence generated: " + randomSentence);
+
+    await s3Tools.getRandomS3Object("funamibot", "zother/").then(
       (value) => {
         interaction.createMessage(
           {
-            content: "a",
             embed: {
+              title: `**${randomSentence}**`,
               image: {
                 url: `https://funamibot.s3.eu-central-2.amazonaws.com/${value}`
               }
