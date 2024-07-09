@@ -33,7 +33,6 @@ module.exports = {
       (value) => {
         interaction.createMessage( 
           {
-
             embed: {
               title: title,
               image: {
