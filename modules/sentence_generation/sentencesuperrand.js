@@ -30,8 +30,6 @@ module.exports = {
       return wordsList.join(" ");
     }
 
-    console.log(interaction.member)
-
     const sentenceTemplates = [
       `I'm ${randomWords()}${randomSentenceEnd()}`,
       `I ${randomWords()}${randomSentenceEnd()}`,

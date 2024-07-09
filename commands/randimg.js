@@ -31,8 +31,9 @@ module.exports = {
 
     await s3Tools.getRandomS3Object("funamibot", "zother/").then(
       (value) => {
-        interaction.createMessage(
+        interaction.createMessage( 
           {
+
             embed: {
               title: title,
               image: {
