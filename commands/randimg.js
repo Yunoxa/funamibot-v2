@@ -7,35 +7,30 @@ module.exports = {
   options: [
     {
       "name": "text_gen",
-      "description": "Random message generation type to use (if any)",
+      "description": "Random sentence generation algorithm to use (if any)",
       "type": Constants.ApplicationCommandOptionTypes.STRING,
       "required": false,
       "choices": [
         {
           "name": "SentenceRand",
-          "value": "sentenceRand"
-        },
-        {
-          "name": "KindaRandom",
-          "value": "kindaRand"
+          "value": "sentencerand"
         }
       ]
     }
   ],
   async generator(interaction) {
     const s3Tools = require("../modules/s3");
-    const sentenceRand = require("../modules/sentence_generation/sentencerand");
-    console.log(interaction.value)
+    const generatorCheck = require("../modules/gencheck");
 
-    const randomSentence = await sentenceRand.getRandomSentence();
-    console.log("Random sentence generated: " + randomSentence);
+    const title = await generatorCheck.checkGeneratorType(interaction);
+    console.log("Random sentence generated: " + title);
 
     await s3Tools.getRandomS3Object("funamibot", "zother/").then(
       (value) => {
         interaction.createMessage(
           {
             embed: {
-              title: `**${randomSentence}**`,
+              title: title,
               image: {
                 url: `https://funamibot.s3.eu-central-2.amazonaws.com/${value}`
               }
