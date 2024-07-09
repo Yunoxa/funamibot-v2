@@ -36,9 +36,6 @@ module.exports = {
       `I'm ${randomWords()}${randomSentenceEnd()}`,
       `I ${randomWords()}${randomSentenceEnd()}`,
       `${randomWord()} is ${randomWord()}${randomSentenceEnd()}`,
-      `Hey ${interaction.member.user.username}, ${randomWords(6)}${randomSentenceEnd()}`,
-      `I love ${randomWords(6)}${randomSentenceEnd()}`,
-      `I love ${randomWord()}${randomSentenceEnd()}`,
       `Put ${randomWord()} in ${randomWord()}${randomSentenceEnd()}`,
       `${randomMessageOOC()}, ${randomMessageOOC()}`,
       `${randomMessageOOC()}. ${randomMessageOOC()}`
