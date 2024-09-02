@@ -2,7 +2,7 @@ module.exports = {
   name: "ayano",
   description: "I'll post a random image of Ayano",
   generator(interaction) {
-    const s3Tools = require("../modules/s3");
+    const s3Tools = require("../utils/s3");
 
     s3Tools.getRandomS3Object("funamibot", "ImagesAyano/").then(
       (value) => {

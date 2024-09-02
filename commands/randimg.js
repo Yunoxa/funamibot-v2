@@ -23,8 +23,8 @@ module.exports = {
     }
   ],
   async generator(interaction) {
-    const s3Tools = require("../modules/s3");
-    const generatorCheck = require("../modules/gencheck");
+    const s3Tools = require("../utils/s3");
+    const generatorCheck = require("../utils/gencheck");
 
     const title = await generatorCheck.checkGeneratorType(interaction);
     console.log("Random sentence generated: " + title);

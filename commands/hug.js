@@ -15,7 +15,7 @@ module.exports = {
   async generator(interaction) {
     const user = interaction.data.options[0].value;
 
-    const s3Tools = require("../modules/s3");
+    const s3Tools = require("../utils/s3");
     const randObj = await s3Tools.getRandomS3Object("funamibot", "hugGifs/");
     console.log(randObj);
     interaction.createMessage({
