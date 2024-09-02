@@ -1,12 +1,13 @@
 const fs = require("fs");
 const Eris = require("eris");
 const Constants = Eris.Constants;
-const generators = require("./sentence_generation")
+const generators = require("./generators/sentence")
 async function checkGeneratorType(interaction) {
   if(interaction.data.options) {
     for(const generator in generators) {
-      if(generators[generator].name === interaction.data.options[0].value) {
-        return await generators[generator].getRandomSentence(interaction);
+      console.log(generators[generator](interaction))
+      if(generator === interaction.data.options[0].value) {
+        return await generators[generator](interaction);
       }
     }
   }

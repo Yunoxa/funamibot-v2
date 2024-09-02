@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # local data
-modules/sentence_generation/words/
+utils/generators/data

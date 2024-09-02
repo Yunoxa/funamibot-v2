@@ -29,18 +29,15 @@ module.exports = {
     const title = await generatorCheck.checkGeneratorType(interaction);
     console.log("Random sentence generated: " + title);
 
-    await s3Tools.getRandomS3Object("funamibot", "zother/").then(
-      (value) => {
-        interaction.createMessage( 
-          {
-            embed: {
-              title: title,
-              image: {
-                url: `https://funamibot.s3.eu-central-2.amazonaws.com/${value}`
-              }
-            }
+    const image = await s3Tools.getRandomS3Object("funamibot", "zother/")
+    interaction.createMessage(
+      {
+        embed: {
+          title: title,
+          image: {
+            url: `https://funamibot.s3.eu-central-2.amazonaws.com/${image}`
           }
-        );
+        }
       }
     );
   }
