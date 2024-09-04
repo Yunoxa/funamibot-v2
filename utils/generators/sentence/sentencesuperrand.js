@@ -1,9 +1,5 @@
-const fs = require('fs');
-
-module.exports = (interaction) => {
+module.exports = (words, messages) => {
   // Super random sentence generation from funamibot-v1
-  const words = require('../data/leg_words.json');
-  const messages = require('../data/leg_messagesooc.json');
   const enders = [".", "!", "?"];
 
   function randomMessageOOC() {

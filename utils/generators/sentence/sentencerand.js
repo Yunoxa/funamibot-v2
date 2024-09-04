@@ -1,7 +1,4 @@
-module.exports = () => {
-  // Words from json file. Not included in repo.
-  const words = require("../data/sentencerand.json");
-
+module.exports = (words) => {
   // Random sentence generation from funamibot-v1
   const firstwordoutput = words.firstword[Math.floor(Math.random()*words.firstword.length)];
   const secondwordoutput = words.secondword[Math.floor(Math.random()*words.secondword.length)];

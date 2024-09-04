@@ -1,4 +1,9 @@
 const Eris = require("eris");
+const stringArr = require("../data/sentencerand.json");
+const stringArr2 = require("../data/leg_words.json");
+const messageArr = require("../data/leg_messagesooc.json");
+const s3Tools = require("../utils/s3");
+const genSentence = require("../utils/generators/sentence");
 const Constants = Eris.Constants;
 
 module.exports = {
@@ -23,10 +28,17 @@ module.exports = {
     }
   ],
   async generator(interaction) {
-    const s3Tools = require("../utils/s3");
-    const generatorCheck = require("../utils/gencheck");
-
-    const title = await generatorCheck.checkGeneratorType(interaction);
+    console.log(interaction.data)
+    let title
+    if (interaction.data.options) {
+      if (interaction.data.options[0].value === "sentencerand") {
+        title = genSentence.sentencerand(stringArr);
+      } else if (interaction.data.options[0].value === "sentencesuperrand") {
+        title = genSentence.sentencesuperrand(stringArr2, messageArr);
+      }
+    } else {
+      title = "Random Image"
+    }
     console.log("Random sentence generated: " + title);
 
     const image = await s3Tools.getRandomS3Object("funamibot", "zother/")
