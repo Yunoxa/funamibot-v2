@@ -1,4 +1,4 @@
-const createCommands = require("./command_creators");
+const createCommands = require("./create/commands");
 
 module.exports = async (commands, client, guildID) => {
   if (guildID) {
