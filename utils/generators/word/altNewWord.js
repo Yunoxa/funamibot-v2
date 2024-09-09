@@ -11,7 +11,7 @@ module.exports = (string, stringArr) => {
   const randomWord = selectedWords[Math.floor(Math.random() * selectedWords.length)];
 
   if (!randomWord) {
-    return "I had difficulty generating a username with this input. Some characters here may be invalid due to me recieving an undefined value. Could you please try again? With English characters only if possible and no whitespace.";
+    return "I had difficulty generating a string with your input. Some characters here may be invalid. Try sticking to English characters if possible and remove any spaces from your input if doing word gen.";
   }
   
   return `${toTitleCase(slicedString)}${randomWord}`;
