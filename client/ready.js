@@ -1,5 +1,5 @@
 const commands = require("../commands");
-const createCommands = require("./utils/create_commands");
+const createCommands = require("./utils/createCommands");
 
 module.exports = (client, guildID) => {
   client.on("ready", async () => {

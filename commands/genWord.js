@@ -4,8 +4,8 @@ const genAltString = require("../utils/generators/word/genAltString.js");
 const stringArr = require("../data/leg_words.json");
 
 module.exports = {
-  name: "username",
-  description: "I'll generate a variant of a username/string of text.",
+  name: "gen-word",
+  description: "I'll generate a new word based on text input.",
   options: [
     {
       "name": "text_gen",
