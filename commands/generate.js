@@ -19,7 +19,11 @@ module.exports = {
       "choices": [
         {
           "name": "pure-rand",
-          "value": "purerand"
+          "value": "pureRand"
+        },
+        {
+          "name": "pure-rand-word",
+          "value": "pureRandWord"
         },
         {
           "name": "sentence-rand",
@@ -62,18 +66,17 @@ module.exports = {
     const imageGen = getOptionValue(interaction.data.options, "image-gen");
     const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
 
-    if (imageGen && textGen) {
-      postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
+    if (textGen || preText || postText) {
+      if (imageGen) {
+        postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
+        return;
+      }
+      interaction.createFollowup(`${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
       return;
     }
 
     if (imageGen) {
       postImage(interaction, image);
-      return;
-    }
-
-    if (textGen) {
-      interaction.createFollowup(`${preText} ${getSentence(textGen)}${postText}`);
       return;
     }
   }
