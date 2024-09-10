@@ -1,9 +1,6 @@
 const Eris = require("eris");
-const stringArr = require("../data/sentencerand.json");
-const stringArr2 = require("../data/leg_words.json");
-const messageArr = require("../data/leg_messagesooc.json");
 const s3Tools = require("../utils/s3");
-const genSentence = require("../utils/generators/sentence");
+const getSentence = require("./randimg/getSentence");
 const Constants = Eris.Constants;
 
 module.exports = {
@@ -11,41 +8,28 @@ module.exports = {
   description: "I'll post a random image!",
   options: [
     {
-      "name": "text_gen",
+      "name": "text-gen",
       "description": "Random sentence generation algorithm to use (if any)",
       "type": Constants.ApplicationCommandOptionTypes.STRING,
       "required": false,
       "choices": [
         {
-          "name": "SentenceRand",
+          "name": "sentence-rand",
           "value": "sentencerand"
         },
         {
-          "name": "SentenceSuperRand",
+          "name": "sentence-super-rand",
           "value": "sentencesuperrand"
         }
       ]
     }
   ],
   async generator(interaction) {
-    console.log(interaction.data)
-    let title
-    if (interaction.data.options) {
-      if (interaction.data.options[0].value === "sentencerand") {
-        title = genSentence.sentencerand(stringArr);
-      } else if (interaction.data.options[0].value === "sentencesuperrand") {
-        title = genSentence.sentencesuperrand(stringArr2, messageArr);
-      }
-    } else {
-      title = "Random Image"
-    }
-    console.log("Random sentence generated: " + title);
-
-    const image = await s3Tools.getRandomS3Object("funamibot", "zother/")
+    const image = await s3Tools.getRandomS3Object("funamibot", "zother/");
     interaction.createMessage(
       {
         embed: {
-          title: title,
+          title: getSentence(interaction),
           image: {
             url: `https://funamibot.s3.eu-central-2.amazonaws.com/${image}`
           }

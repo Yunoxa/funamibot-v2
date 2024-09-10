@@ -1,9 +1,8 @@
 const Eris = require("eris");
 const Constants = Eris.Constants;
-const altNewString = require("../utils/generators/word/altNewWord.js");
-const appendNewString = require("../utils/generators/sentence/appendNewString.js")
-const sentenceArr = require("../data/leg_messagesooc.json");
-const wordArr = require("../data/leg_words.json");
+const getTextOfType = require("./regenText/getTextOfType");
+const createMeme = require("../utils/image/createMeme");
+const s3Tools = require("../utils/s3");
 
 module.exports = {
   name: "regen-text",
@@ -32,17 +31,29 @@ module.exports = {
         {
           "name": "append-sentence",
           "value": "appendSentence"
-        }
+        },
       ]
+    },
+    {
+      "name": "meme",
+      "description": "Whether to create a meme style image with the text.",
+      "type": Constants.ApplicationCommandOptionTypes.BOOLEAN,
+      "required": false,
     }
   ],
-  generator(interaction) {
-    if (interaction.data.options[1].value === "newWord") {
-      interaction.createMessage(altNewString(interaction.data.options[0].value, wordArr.words));
-    } else if (interaction.data.options[1].value === "newSentence") {
-      interaction.createMessage(altNewString(interaction.data.options[0].value, sentenceArr.MessagesOOC));
-    } else if (interaction.data.options[1].value === "appendSentence") {
-      interaction.createMessage(appendNewString(interaction.data.options[0].value, sentenceArr.MessagesOOC));
+  async generator(interaction) {
+    if (interaction.data.options[2].value) {
+      const meme = await createMeme(
+        `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`, 
+        getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)
+      );
+      await interaction.createMessage("", {
+          name: "meme.png",
+          file: meme
+        }
+      );
+    } else {
+      interaction.createMessage(getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value));
     }
   }
 }

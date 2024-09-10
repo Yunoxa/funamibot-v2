@@ -24,7 +24,11 @@ async function getRandomS3Object(bucket, folder) {
     objects.push(item.Key);
   });
 
-  return objects[Math.floor(Math.random() * objects.length)];
+  const randomObject = objects[Math.floor(Math.random() * objects.length)];
+
+  console.log(`Selected object: ${randomObject}`);
+
+  return randomObject;
 }
 
 module.exports = { getRandomS3Object };
