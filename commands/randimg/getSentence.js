@@ -5,6 +5,8 @@ module.exports = (value) => {
   if (value === "sentencerand") {
     return genSentence.sentencerand(data.sentencerand);
   } else if (value === "sentencesuperrand") {
-    return genSentence.sentencesuperrand(data.leg_words.words, data.leg_messagesooc.MessagesOOC);
+    return genSentence.sentencesuperrand(data.leg_words, data.leg_messagesooc);
+  } else if (value === "purerand") {
+    return data.leg_messagesooc.MessagesOOC[Math.floor(Math.random() * data.leg_messagesooc.MessagesOOC.length)];
   }
 }

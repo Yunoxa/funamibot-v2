@@ -8,7 +8,5 @@ module.exports = (checkValue, textValue) => {
     return altNewString(textValue, wordArr.words);
   } else if (checkValue === "newSentence") {
     return altNewString(textValue, sentenceArr.MessagesOOC);
-  } else if (checkValue === "appendSentence") {
-    return appendNewString(textValue, sentenceArr.MessagesOOC);
   }
 }

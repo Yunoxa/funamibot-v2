@@ -30,10 +30,6 @@ module.exports = {
           "name": "new-sentence",
           "value": "newSentence"
         },
-        {
-          "name": "append-sentence",
-          "value": "appendSentence"
-        },
       ]
     },
     {

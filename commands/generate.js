@@ -3,10 +3,12 @@ const s3Tools = require("../utils/s3");
 const getSentence = require("./randimg/getSentence");
 const getOptionValue = require("../utils/eris/getOptionValue");
 const postImage = require("./randimg/postImage");
+const postMeme = require("./regenText/postMeme");
+const undefinedToEmptyString = require("../utils/common/string/undefinedToEmptyString");
 const Constants = Eris.Constants;
 
 module.exports = {
-  name: "randimg",
+  name: "generate",
   description: "I'll post randomised text and images!",
   options: [
     {
@@ -15,6 +17,10 @@ module.exports = {
       "type": Constants.ApplicationCommandOptionTypes.STRING,
       "required": false,
       "choices": [
+        {
+          "name": "pure-rand",
+          "value": "purerand"
+        },
         {
           "name": "sentence-rand",
           "value": "sentencerand"
@@ -30,12 +36,36 @@ module.exports = {
       "description": "Whether to generate a random image",
       "type": Constants.ApplicationCommandOptionTypes.BOOLEAN,
       "required": false
-    }
+    },
+    {
+      "name": "pre-text",
+      "description": "Enter a string of text for Yui to prepend to the text-gen sentence",
+      "type": Constants.ApplicationCommandOptionTypes.STRING,
+      "required": false
+    },
+    {
+      "name": "post-text",
+      "description": "Enter a string of text for Yui to append to the text-gen sentence",
+      "type": Constants.ApplicationCommandOptionTypes.STRING,
+      "required": false
+    },
   ],
   async generator(interaction) {
+    if (!interaction.data.options) {
+      interaction.createFollowup("You didn't choose any options, please choose at least one.");
+      return;
+    }
+
     const textGen = getOptionValue(interaction.data.options, "text-gen");
+    const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
+    const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
     const imageGen = getOptionValue(interaction.data.options, "image-gen");
     const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
+
+    if (imageGen && textGen) {
+      postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
+      return;
+    }
 
     if (imageGen) {
       postImage(interaction, image);
@@ -43,10 +73,8 @@ module.exports = {
     }
 
     if (textGen) {
-      interaction.createFollowup(getSentence(textGen));
+      interaction.createFollowup(`${preText} ${getSentence(textGen)}${postText}`);
       return;
     }
-
-    interaction.createFollowup("You didn't choose any options, please choose at least one.");
   }
 }
