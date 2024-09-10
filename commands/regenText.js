@@ -1,8 +1,10 @@
 const Eris = require("eris");
 const Constants = Eris.Constants;
-const getTextOfType = require("./regenText/getTextOfType");
-const createMeme = require("../utils/image/createMeme");
 const s3Tools = require("../utils/s3");
+const getTextOfType = require("./regenText/getTextOfType");
+const getOptionValue = require("../utils/eris/getOptionValue");
+const postMeme = require("./regenText/postMeme");
+const undefinedToEmptyString = require("../utils/common/string/undefinedToEmptyString");
 
 module.exports = {
   name: "regen-text",
@@ -39,24 +41,27 @@ module.exports = {
       "description": "Whether to create a meme style image with the text.",
       "type": Constants.ApplicationCommandOptionTypes.BOOLEAN,
       "required": false,
+    },
+    {
+      "name": "after-text",
+      "description": "Adds extra text after generated text.",
+      "type": Constants.ApplicationCommandOptionTypes.STRING,
+      "required": false,
     }
   ],
   async generator(interaction) {
-    if (!interaction.data.options[2]) {
-      interaction.createMessage(getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value));
-    } else if (interaction.data.options[2].value) {
-      await interaction.defer();
-      const meme = await createMeme(
-        `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`, 
-        getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)
+    const afterText = undefinedToEmptyString(getOptionValue(interaction.data.options, "after-text"));
+    const memeValue = getOptionValue(interaction.data.options, "meme");
+
+    if (memeValue) {
+      postMeme(
+        interaction,
+        `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`,
+        `${getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)} ${afterText}`
       );
-      interaction.createFollowup("", {
-          name: "meme.png",
-          file: meme
-        }
-      );
-    } else {
-      interaction.createMessage(getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value));
-    }
+      return;
+    } 
+    
+    interaction.createMessage(`${getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)} ${afterText}`); 
   }
 }
