@@ -68,10 +68,10 @@ module.exports = {
 
     if (textGen || preText || postText) {
       if (imageGen) {
-        postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
+        postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
         return;
       }
-      interaction.createFollowup(`${preText} ${undefinedToEmptyString(getSentence(textGen))}${postText}`);
+      interaction.createFollowup(`${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
       return;
     }
 
