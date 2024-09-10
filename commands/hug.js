@@ -18,7 +18,7 @@ module.exports = {
     const s3Tools = require("../utils/s3");
     const randObj = await s3Tools.getRandomS3Object("funamibot", "hugGifs/");
     console.log(randObj);
-    interaction.createMessage({
+    interaction.createFollowup({
       content: `${interaction.member.mention} hugs <@!${user}>`,
       embeds: [{
         image: {

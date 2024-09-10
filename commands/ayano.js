@@ -6,7 +6,7 @@ module.exports = {
 
     s3Tools.getRandomS3Object("funamibot", "ImagesAyano/").then(
       (value) => {
-        interaction.createMessage({
+        interaction.createFollowup({
           embeds: [{
             title: "**Photo of Ayano**",
             image: {

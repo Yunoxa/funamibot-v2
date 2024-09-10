@@ -15,11 +15,11 @@ module.exports = {
   async generator(interaction, client) {
     await client.deleteGuildCommand(interaction.guildID, interaction.data.options[0].value)
     .then(() => {
-      interaction.createMessage(`Deleted guild command with id ${interaction.data.options[0].value}!`);
+      interaction.createFollowup(`Deleted guild command with id ${interaction.data.options[0].value}!`);
       console.log(`Deleted guild command with id ${interaction.data.options[0].value}!`);
     })
     .catch((error) => {
-      interaction.createMessage(`I failed to delete a guild command with the id ${interaction.data.options[0].value}. Are you sure this command exists?`);
+      interaction.createFollowup(`I failed to delete a guild command with the id ${interaction.data.options[0].value}. Are you sure this command exists?`);
       console.error(error);
     });
   }

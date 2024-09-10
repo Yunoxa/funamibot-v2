@@ -50,18 +50,20 @@ module.exports = {
     }
   ],
   async generator(interaction) {
-    const afterText = undefinedToEmptyString(getOptionValue(interaction.data.options, "after-text"));
+    const text = getOptionValue(interaction.data.options, "text");
+    const algo = getOptionValue(interaction.data.options, "algo");
     const memeValue = getOptionValue(interaction.data.options, "meme");
+    const afterText = undefinedToEmptyString(getOptionValue(interaction.data.options, "after-text"));
 
     if (memeValue) {
       postMeme(
         interaction,
         `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`,
-        `${getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)} ${afterText}`
+        `${getTextOfType(algo, text)} ${afterText}`
       );
       return;
     } 
     
-    interaction.createMessage(`${getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)} ${afterText}`); 
+    interaction.createFollowup(`${getTextOfType(algo, text)} ${afterText}`);
   }
 }

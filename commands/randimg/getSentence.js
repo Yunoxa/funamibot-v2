@@ -1,16 +1,10 @@
 const genSentence = require("../../utils/generators/sentence");
-const stringArr = require("../../data/sentencerand.json");
-const stringArr2 = require("../../data/leg_words.json");
-const messageArr = require("../../data/leg_messagesooc.json");
+const data = require("../../data");
 
-module.exports = (interaction) => {
-  if (interaction.data.options) {
-    if (interaction.data.options[0].value === "sentencerand") {
-      return genSentence.sentencerand(stringArr);
-    } else if (interaction.data.options[0].value === "sentencesuperrand") {
-      return genSentence.sentencesuperrand(stringArr2, messageArr);
-    }
-  } else {
-    return "Random Image"
+module.exports = (value) => {
+  if (value === "sentencerand") {
+    return genSentence.sentencerand(data.sentencerand);
+  } else if (value === "sentencesuperrand") {
+    return genSentence.sentencesuperrand(data.leg_words.words, data.leg_messagesooc.MessagesOOC);
   }
 }
