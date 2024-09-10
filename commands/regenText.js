@@ -42,12 +42,14 @@ module.exports = {
     }
   ],
   async generator(interaction) {
-    if (interaction.data.options[2].value) {
+    if (!interaction.data.options[2]) {
+      interaction.createMessage(getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value));
+    } else if (interaction.data.options[2].value) {
       const meme = await createMeme(
         `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`, 
         getTextOfType(interaction.data.options[1].value, interaction.data.options[0].value)
       );
-      await interaction.createMessage("", {
+      interaction.createMessage("", {
           name: "meme.png",
           file: meme
         }
