@@ -8,7 +8,7 @@ module.exports = async (image, text) => {
     const ctx = imageCanvas.getContext("2d");
     wrappedText = wrapText(ctx, text, 110);
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, imageCanvas.width, imageCanvas.height);
-    ctx.font = `80px Impact Unicode`;
+    ctx.font = `80px Impact`;
     ctx.lineWidth = 4;
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
