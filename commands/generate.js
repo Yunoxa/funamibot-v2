@@ -67,7 +67,7 @@ module.exports = {
     const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
 
     if (textGen || preText || postText) {
-      if (imageGen) {
+      if (imageGen || imageGen === undefined) {
         postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
         return;
       }
