@@ -56,18 +56,19 @@ module.exports = {
   ],
   async generator(interaction) {
     if (!interaction.data.options) {
-      interaction.createFollowup("You didn't choose any options, please choose at least one.");
+      const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
+      postImage(interaction, image);
       return;
     }
-
+1
     const textGen = getOptionValue(interaction.data.options, "text-gen");
     const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
     const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
     const imageGen = getOptionValue(interaction.data.options, "image-gen");
-    const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
 
     if (textGen || preText || postText) {
       if (imageGen || imageGen === undefined) {
+        const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
         postMeme(interaction, image, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
         return;
       }
@@ -76,8 +77,12 @@ module.exports = {
     }
 
     if (imageGen) {
+      const image = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "zother/")}`;
       postImage(interaction, image);
       return;
     }
+
+    interaction.createFollowup("You didn't enable any options, please choose at least one.");
+    return;
   }
 }
