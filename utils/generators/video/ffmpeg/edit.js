@@ -2,7 +2,6 @@ const FfmpegCommand = require("fluent-ffmpeg");
 const s3Tools = require("../../../s3");
 const ffmpegAudio = require("./audio");
 const ffmpegVideo = require("./video");
-const replaceWithMusic = require("./special/replaceWithMusic");
 const chanceFromInt = require("../../../common/math/chanceFromInt");
 const randInt = require("../../../common/math/randInt");
 
@@ -12,6 +11,7 @@ module.exports = async (video, text, duration) => {
   command.inputFormat('mp4');
   command.toFormat("mp4");
   command.outputOptions('-movflags frag_keyframe+empty_moov');
+  command.addOption('-map 0');
   command.videoFilters({
     filter: "drawtext",
     options: {
@@ -25,26 +25,20 @@ module.exports = async (video, text, duration) => {
       y: "20"
     }
   });
-  console.log(duration)
   command.duration(Math.ceil(duration));
 
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
-      await command.audioFilters(ffmpegAudio[key](duration, command));
-      console.log(`Applied audio filter ${key} to video.`);
+      await command.audioFilters(ffmpegAudio[key](duration));
+      console.log(`Applied audio filter ${key} to video (${ffmpegAudio[key]()}).`);
     }
   }
 
   for (let key in ffmpegVideo) {
     if (chanceFromInt(Object.keys(ffmpegVideo).length)) {
-      await command.videoFilters(ffmpegVideo[key](duration, command));
+      await command.videoFilters(ffmpegVideo[key](duration));
       console.log(`Applied video filter ${key} to video (${ffmpegVideo[key]()}).`);
     }
-  }
-
-  if (chanceFromInt(2)) {
-    await replaceWithMusic(command);
-    console.log("B!")
   }
 
   command.on("error", (err) => {
