@@ -1,4 +1,4 @@
-const createMeme = require("../../utils/image/createMeme");
+const createMeme = require("../../utils/generators/image/createMeme");
 
 module.exports = async (interaction, url, text) => {
   interaction.createFollowup("", {

@@ -20,6 +20,7 @@ async function getRandomS3Object(bucket, folder) {
   console.log(`Objects recieved from ${folder} folder in ${bucket} bucket.`);
 
   const objects = [];
+  response.Contents.shift();
   response.Contents.forEach(item => {
     objects.push(item.Key);
   });

@@ -1,4 +1,4 @@
-const processImage = require("../../utils/image/processImage");
+const processImage = require("../../utils/generators/image/processImage");
 
 module.exports = async (interaction, url) => {
   interaction.createFollowup("", {
