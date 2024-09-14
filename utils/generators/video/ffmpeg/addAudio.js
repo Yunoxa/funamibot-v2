@@ -10,19 +10,19 @@ module.exports = async (video, duration) => {
   command.toFormat("mp4");
   command.outputOptions('-movflags frag_keyframe+empty_moov');
 
-  if (chanceFromInt(2)) {
-    const object = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "audio/music/")}`;
-    command.input(object);
+  if (chanceFromInt(4)) {
+    const object = await s3Tools.getRandomS3Object("funamibot", "audio/music/");
+    command.input(`https://funamibot.s3.eu-central-2.amazonaws.com/${object}`);
     command.inputFormat('mp3');
-    console.log("Audio replaced with music.");
+    console.log("Music added.");
   }
 
   for (let i = 0; i < duration; i++) {
-    if (chanceFromInt(3)) {
-      const object = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3Tools.getRandomS3Object("funamibot", "audio/SFX/")}`;
-      command.input(object);
-      command.inputFormat('mp3');
-      command.seekInput(i);
+    if (chanceFromInt(2)) {
+      const object = await s3Tools.getRandomS3Object("funamibot", "audio/SFX/");
+      command.input(`https://funamibot.s3.eu-central-2.amazonaws.com/${object}`)
+             .inputFormat('mp3')
+             .setStartTime(i);
       console.log("I added a sound effect at " + i + " seconds in the video.");
     }
   }
@@ -38,9 +38,9 @@ module.exports = async (video, duration) => {
 
   command.complexFilter([
     {
-      filter: 'amix', options: { inputs: Object.keys(command._inputs).length, duration: 'shortest' }
+      filter: 'amix', options: { inputs: Object.keys(command._inputs).length, duration: 'longest' }
     }
-  ])
+  ]);
 
   return command.pipe();
 }
