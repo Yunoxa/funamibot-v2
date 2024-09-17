@@ -9,6 +9,7 @@ module.exports = async (video, text, duration) => {
   command.inputFormat('mp4');
   command.toFormat("mp4");
   command.outputOptions('-movflags frag_keyframe+empty_moov');
+  command.duration(Math.ceil(duration));
   command.videoFilters({
     filter: "drawtext",
     options: {
@@ -22,21 +23,26 @@ module.exports = async (video, text, duration) => {
       y: "20"
     }
   });
-  command.duration(Math.ceil(duration));
 
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
-      await command.audioFilters(ffmpegAudio[key](duration));
-      console.log(`Applied audio filter ${key} to video (${ffmpegAudio[key](duration)}).`);
+      const parameters = ffmpegAudio[key](duration);
+      command.audioFilters(parameters);
+      console.log(`Applied audio filter ${key} to video (${parameters}).`);
     }
   }
 
   for (let key in ffmpegVideo) {
     if (chanceFromInt(Object.keys(ffmpegVideo).length)) {
-      await command.videoFilters(ffmpegVideo[key](duration));
-      console.log(`Applied video filter ${key} to video (${ffmpegVideo[key](duration)}).`);
+      const parameters = ffmpegVideo[key](duration);
+      command.videoFilters(parameters);
+      console.log(`Applied video filter ${key} to video (${parameters}).`);
     }
   }
+
+  command.on("start", (cmdline) => {
+    console.log(cmdline);
+  });
 
   command.on("error", (err) => {
     console.log("an error happened: " + err.message);

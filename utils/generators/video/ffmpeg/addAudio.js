@@ -9,38 +9,60 @@ module.exports = async (video, duration) => {
   command.inputFormat('mp4');
   command.toFormat("mp4");
   command.outputOptions('-movflags frag_keyframe+empty_moov');
+  command.outputOptions("-async 1");
+  command.duration(Math.ceil(duration));
 
-  if (chanceFromInt(4)) {
-    const object = await s3Tools.getRandomS3Object("funamibot", "audio/music/");
-    command.input(`https://funamibot.s3.eu-central-2.amazonaws.com/${object}`);
-    command.inputFormat('mp3');
-    console.log("Music added.");
+  const filters = [];
+  const mixInputs = ["0:1"];
+
+  for (let i = command._inputs.length; i < randInt(1, duration); i++) {
+    console.log(command._inputs.length)
+    console.log(filters.length)
+    const sound = await s3Tools.getRandomS3Object("funamibot", "audio/SFX/");
+    command
+      .input(`https://funamibot.s3.eu-central-2.amazonaws.com/${sound}`)
+      .inputFormat('mp3')
+
+    filters.push(
+      {
+        filter: "anullsrc",
+        outputs: [`silence_${i}`],
+        options: `d=${randInt(1, duration)}`
+      }
+    );
+    filters.push(
+      {
+        filter: "concat",
+        inputs: [`silence_${i}`, `${i}`],
+        outputs: [`sfx_${i}`],
+        options: "n=2:v=0:a=1"
+      }
+    );
+    mixInputs.push(`sfx_${i}`);
   }
 
-  for (let i = 0; i < duration; i++) {
-    if (chanceFromInt(2)) {
-      const object = await s3Tools.getRandomS3Object("funamibot", "audio/SFX/");
-      command.input(`https://funamibot.s3.eu-central-2.amazonaws.com/${object}`)
-             .inputFormat('mp3')
-             .setStartTime(i);
-      console.log("I added a sound effect at " + i + " seconds in the video.");
-    }
+  if (filters.length > 0) {
+    filters.push(
+      {
+        filter: 'amix', 
+        inputs: mixInputs,
+        options: `inputs=${mixInputs.length}:duration=longest`
+      }
+    );
+
+    console.log(command);
+    console.log(mixInputs);
+    console.log(filters);
+    command.complexFilter(filters);
   }
 
-  command.on('codecData', function(data) {
-    console.log('Input is ' + data.audio + ' audio ' +
-      'with ' + data.audio_details + ' audio');
+  command.on("start", (cmdline) => {
+    console.log(cmdline);
   });
 
   command.on("error", (err) => {
     console.log('an error happened: ' + err.message);
   });
-
-  command.complexFilter([
-    {
-      filter: 'amix', options: { inputs: Object.keys(command._inputs).length, duration: 'longest' }
-    }
-  ]);
 
   return command.pipe();
 }
