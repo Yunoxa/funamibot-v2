@@ -6,7 +6,7 @@ const client = new Eris(`Bot ${process.env.TESTTOKEN}`, {
   intents: []
 });
 
-onClient.ready(client, process.env.GUILDID);
+onClient.ready(client, process.env.GUILDID.split(","));
 onClient.interactionCreate(client);
 
 client.on("error", (err) => {

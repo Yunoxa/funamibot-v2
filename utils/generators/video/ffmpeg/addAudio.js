@@ -15,7 +15,7 @@ module.exports = async (video, duration) => {
   const filters = [];
   const mixInputs = ["0:1"];
 
-  for (let i = command._inputs.length; i < randInt(1, duration); i++) {
+  for (let i = command._inputs.length; i < randInt(1, Math.ceil(duration)); i++) {
     console.log(command._inputs.length)
     console.log(filters.length)
     const sound = await s3Tools.getRandomS3Object("funamibot", "audio/SFX/");
@@ -27,7 +27,7 @@ module.exports = async (video, duration) => {
       {
         filter: "anullsrc",
         outputs: [`silence_${i}`],
-        options: `d=${randInt(1, duration)}`
+        options: `d=${randInt(1, Math.ceil(duration))}`
       }
     );
     filters.push(

@@ -3,6 +3,7 @@ const { videoDuration } = require("@numairawan/video-duration");
 
 module.exports = async (video, text) => {
   const duration = await videoDuration(video);
+  console.log(duration)
   
   const resizedVideo = await ffmpegUtils.resize(video, "960x540");
   console.log("Video resized.");
