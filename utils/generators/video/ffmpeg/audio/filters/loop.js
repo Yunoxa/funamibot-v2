@@ -1,4 +1,4 @@
-const randInt = require("../../../../common/math/randInt");
+const randInt = require("../../../../../common/math/randInt");
 
 module.exports = (duration) => {
   console.log(duration)

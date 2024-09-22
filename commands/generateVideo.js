@@ -1,11 +1,11 @@
 const createVideo = require("../utils/generators/video/createVideo");
-const streamToBuffer = require("../utils/common/stream/streamToBuffer");
 const undefinedToEmptyString = require("../utils/common/string/undefinedToEmptyString");
 const getOptionValue = require("../utils/eris/getOptionValue");
 const s3Tools = require("../utils/s3");
 const getSentence = require("./randimg/getSentence");
 const Eris = require("eris");
 const Constants = Eris.Constants;
+const fs = require('fs');
 
 module.exports = {
   name: "generate-video",
@@ -48,15 +48,18 @@ module.exports = {
       "required": false
     }
   ],
-  async generator(interaction) {    
+  async generator(interaction) {
+    const { getStreamAsBuffer } = await import("get-stream");
     const videoLink = "https://funamibot.s3.eu-central-2.amazonaws.com/";
 
     if (!interaction.data.options) {
       const getVideo = await s3Tools.getRandomS3Object("funamibot", "videos/");
-      const video = await createVideo(`${videoLink}${getVideo}`, "");
-      const videoBuffer = await streamToBuffer(video);
+      const videoStream = await createVideo(`${videoLink}${getVideo}`, "");
 
-      interaction.createFollowup("", {name: "video.mp4", file: videoBuffer});
+      const video = await getStreamAsBuffer(videoStream);
+      console.log(video)
+
+      interaction.createFollowup("", {name: "video.mp4", file: video});
       return;
     }
 
@@ -64,10 +67,11 @@ module.exports = {
     const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
     const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
     const getVideo = await s3Tools.getRandomS3Object("funamibot", "videos/");
-    const video = await createVideo(`${videoLink}${getVideo}`, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`, "");
-    const videoBuffer = await streamToBuffer(video);
+    const videoStream = await createVideo(`${videoLink}${getVideo}`, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
 
-    interaction.createFollowup("", {name: "video.mp4", file: videoBuffer});
+    const video = await getStreamAsBuffer(videoStream);
+
+    interaction.createFollowup("", {name: "video.mp4", file: video});
     return;
   }
 }
