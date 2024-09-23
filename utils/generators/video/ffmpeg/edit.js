@@ -3,13 +3,14 @@ const ffmpegAudio = require("./audio/filters");
 const ffmpegVideo = require("./video/filters");
 const chanceFromInt = require("../../../common/math/chanceFromInt");
 
-module.exports = async (video, text, duration) => {
+module.exports = async (video, text, duration, dimensions) => {
   const command = new FfmpegCommand();
   command.input(video);
   command.inputFormat('mp4');
   command.toFormat("mp4");
   command.duration(Math.ceil(duration));
   command.outputOptions('-movflags frag_keyframe+empty_moov');
+  command.size(dimensions);
   command.videoFilters({
     filter: "drawtext",
     options: {
@@ -42,6 +43,10 @@ module.exports = async (video, text, duration) => {
 
   command.on('progress', (progress) => {
     console.log('Processing: ' + progress.targetSize + ' KB converted');
+  });
+
+  command.on('error', (err) => {
+    console.error(err);
   });
   
   return command.pipe();
