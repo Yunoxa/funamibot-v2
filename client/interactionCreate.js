@@ -8,7 +8,11 @@ module.exports = (client) => {
         if (interaction.data.name == commands[command].name) {
           await interaction.defer();
           console.log(`Executing ${interaction.data.name}...`);
-          await commands[command].generator(interaction, client);
+          await commands[command].generator(interaction, client)
+                                 .catch((err) => {
+                                   interaction.createFollowup("Error: " + err);
+                                   console.log(err);
+                                 });
           console.log(`I've finished executing ${interaction.data.name}!`);
         }
       }

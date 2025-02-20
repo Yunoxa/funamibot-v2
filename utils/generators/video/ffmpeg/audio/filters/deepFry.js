@@ -1,5 +1,5 @@
 const randInt = require("../../../../../common/math/randInt");
 
 module.exports = () => {
-  return `colorize=hue=${randInt(0, 360)}:saturation=1`;
+  return [`volume=100`, "compand=attacks=0:points=-80/-80|0/0|20/0"];
 }

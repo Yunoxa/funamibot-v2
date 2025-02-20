@@ -1,10 +1,12 @@
 const ffmpegUtils = require("./ffmpeg");
-const { videoDuration } = require("@numairawan/video-duration");
+const getDuration = require("./ffprobe/getDuration");
+const ffmpeg = require("fluent-ffmpeg");
 
 module.exports = async (video, text) => {
-  const duration = await videoDuration(video);
+  const metadata = await getDuration(video.url);
+  const duration = metadata.streams[0].duration;
 
-  const editedVideo = await ffmpegUtils.edit(video, text, duration.seconds, "960x540");
+  const editedVideo = await ffmpegUtils.edit(video, text, duration, `${video.width}x${video.height}`);
   console.log("Finished editing video.");
 
   return editedVideo;

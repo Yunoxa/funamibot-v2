@@ -1,7 +1,9 @@
 const createVideo = require("../utils/generators/video/createVideo");
 const undefinedToEmptyString = require("../utils/common/string/undefinedToEmptyString");
 const getOptionValue = require("../utils/eris/getOptionValue");
-const s3Tools = require("../utils/s3");
+const getLatestVideo = require("../utils/eris/getLatestVideo");
+const getRandomVideo = require("../utils/eris/getRandomVideo");
+const getChannelMessages = require("../utils/eris/getChannelMessages");
 const getSentence = require("./randimg/getSentence");
 const Eris = require("eris");
 const Constants = Eris.Constants;
@@ -46,18 +48,30 @@ module.exports = {
       "description": "Enter a string of text for Yui to append to the text-gen sentence",
       "type": Constants.ApplicationCommandOptionTypes.STRING,
       "required": false
+    },
+    {
+      "name": "messageid",
+      "description": "The messageid of a messsage containing a specific video",
+      "type": Constants.ApplicationCommandOptionTypes.STRING
+    },
+    {
+      "name": "randomisation",
+      "description": "Whether to enable video/attachment randomised selection.",
+      "type": Constants.ApplicationCommandOptionTypes.BOOLEAN
     }
   ],
-  async generator(interaction) {
+  async generator(interaction, client) {
     const { getStreamAsBuffer } = await import("get-stream");
-    const videoLink = "https://funamibot.s3.eu-central-2.amazonaws.com/";
 
-    if (!interaction.data.options) {
-      const getVideo = await s3Tools.getRandomS3Object("funamibot", "videos/");
-      const videoStream = await createVideo(`${videoLink}${getVideo}`, "");
+    if(!interaction.data.options) {
+      const channelMessages = await interaction.channel.getMessages({
+        before: interaction.channel.lastMessageID,
+        limit: 100
+      });
+      const latestVideo = getLatestVideo(channelMessages);
+      const videoStream = await createVideo(latestVideo, "");
 
       const video = await getStreamAsBuffer(videoStream);
-      console.log(video)
 
       interaction.createFollowup("", {name: "video.mp4", file: video});
       return;
@@ -66,12 +80,69 @@ module.exports = {
     const textGen = getOptionValue(interaction.data.options, "text-gen");
     const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
     const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
-    const getVideo = await s3Tools.getRandomS3Object("funamibot", "videos/");
-    const videoStream = await createVideo(`${videoLink}${getVideo}`, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
 
+    if(getOptionValue(interaction.data.options, "messageid")) {
+      const messageID = [getOptionValue(interaction.data.options, "messageid")];
+
+      const message = await interaction.channel.getMessage(messageID)
+                                       .catch(() => {
+                                         console.log("Invalid message id entered.");
+                                       });
+
+      if(!message) {
+        interaction.createFollowup("That's not a valid message id. Enter a valid message id.")
+        return;
+      }
+
+      const selectedVideo = getLatestVideo([message]);
+      if(!selectedVideo) {
+        interaction.createFollowup("Sorry, I couldn't find any valid video attachment in this message.")
+        return;
+      }
+
+      const videoStream = await createVideo(selectedVideo, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
+      const video = await getStreamAsBuffer(videoStream);
+      interaction.createFollowup("", {name: "video.mp4", file: video});
+      return;
+    }
+
+    if(getOptionValue(interaction.data.options, "randomisation") === true) {
+      const channelMessages = await interaction.channel.getMessages({
+        before: interaction.channel.lastMessageID,
+        limit: 100
+      });
+      const randomVideo = getRandomVideo(channelMessages);
+
+      if(randomVideo.length === 0) {
+        interaction.createFollowup("Hey, there's no recent enough valid video's in this channel...");
+        return;
+      }
+      console.log(randomVideo);
+      const videoStream = await createVideo(randomVideo, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
+
+      const video = await getStreamAsBuffer(videoStream);
+
+      interaction.createFollowup("", {name: "video.mp4", file: video});
+      return;
+    }
+
+    const channelMessages = await interaction.channel.getMessages({
+      before: interaction.channel.lastMessageID,
+      limit: 100
+    });
+    const latestVideo = getLatestVideo(channelMessages);
+
+    if(!latestVideo) {
+      interaction.createFollowup("Hey, I couldn't find any recently posted video in this channel, please post one first.")
+      return;
+    }
+
+    const videoStream = await createVideo(latestVideo, `${preText} ${getSentence(textGen).toString()} ${postText}`);
     const video = await getStreamAsBuffer(videoStream);
-
-    interaction.createFollowup("", {name: "video.mp4", file: video});
+    interaction.createFollowup("", {
+      name: latestVideo.filename,
+      file: video
+    });
     return;
   }
 }

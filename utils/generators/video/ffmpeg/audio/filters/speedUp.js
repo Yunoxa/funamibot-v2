@@ -1,3 +1,3 @@
 module.exports = () => {
-  return `stereo3d`
+  return `atempo=2.0`;
 }

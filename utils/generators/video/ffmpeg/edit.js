@@ -1,15 +1,20 @@
-const FfmpegCommand = require("fluent-ffmpeg");
+const ffmpeg = require("fluent-ffmpeg");
 const ffmpegAudio = require("./audio/filters");
 const ffmpegVideo = require("./video/filters");
 const chanceFromInt = require("../../../common/math/chanceFromInt");
+const s3 = require("../../../s3");
 
 module.exports = async (video, text, duration, dimensions) => {
-  const command = new FfmpegCommand();
-  command.input(video);
-  command.inputFormat('mp4');
-  command.toFormat("mp4");
-  command.duration(Math.ceil(duration));
-  command.outputOptions('-movflags frag_keyframe+empty_moov');
+  const command = new ffmpeg();
+  command.input(video.url);
+  command.inputFormat(video.content_type.replace("video/", ""));
+  command.toFormat(video.content_type.replace("video/", ""));
+  command.outputOptions([
+    "-movflags frag_keyframe+empty_moov",
+    "-fs 4M",
+    "-fflags +shortest",
+    "-crf 40"
+  ]);
   command.size(dimensions);
   command.videoFilters({
     filter: "drawtext",
@@ -24,7 +29,8 @@ module.exports = async (video, text, duration, dimensions) => {
       y: "20"
     }
   });
-
+  command.videoFilters('fade=in:0:5');
+ 
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
       const parameters = ffmpegAudio[key](duration);
@@ -41,6 +47,18 @@ module.exports = async (video, text, duration, dimensions) => {
     }
   }
 
+  if(chanceFromInt(3)) {
+    const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
+    command.input(replacementAudio);
+    command.outputOptions("-map 1:a:0");
+    command.outputOptions("-map 0:v:0");
+    command.inputOptions("-stream_loop -1");
+  }
+
+  command.on('start', function(commandLine) {
+    console.log('Spawned Ffmpeg with command: ' + commandLine);
+  });
+
   command.on('progress', (progress) => {
     console.log('Processing: ' + progress.targetSize + ' KB converted');
   });
@@ -48,6 +66,6 @@ module.exports = async (video, text, duration, dimensions) => {
   command.on('error', (err) => {
     console.error(err);
   });
-  
+
   return command.pipe();
 }
