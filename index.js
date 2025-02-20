@@ -3,7 +3,7 @@ const Eris = require("eris");
 const onClient = require("./client");
 
 const client = new Eris(`Bot ${process.env.TOKEN}`, {
-  intents: []
+  intents: ["all"]
 });
 
 onClient.ready(client);
