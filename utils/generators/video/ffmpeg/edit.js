@@ -8,13 +8,12 @@ module.exports = async (video, text, duration, dimensions) => {
   const command = new ffmpeg();
   command.input(video.url);
   command.inputFormat(video.content_type.replace("video/", ""));
-  command.inputOptions("-stream_loop -1");
   command.toFormat(video.content_type.replace("video/", ""));
   command.outputOptions([
     "-movflags frag_keyframe+empty_moov",
     "-fs 4M",
     "-shortest",
-    "-crf 40"
+    "-crf 51"
   ]);
   command.size(dimensions);
   command.videoFilters({
@@ -53,6 +52,7 @@ module.exports = async (video, text, duration, dimensions) => {
     command.input(replacementAudio);
     command.outputOptions("-map 1:a:0");
     command.outputOptions("-map 0:v:0");
+    command.inputOptions("-stream_loop -1");
   }
 
   command.on('start', function(commandLine) {
