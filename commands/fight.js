@@ -14,7 +14,7 @@ module.exports = {
       "required": true,
     }
   ],
-  generator(interaction) {
+  async generator(interaction) {
     // WARNING FROM FUTURE ME. The following code is from the old bot and is very, very old. 
     // I recommend you don't look at this mess for your own sanity. You have been warned...
 
