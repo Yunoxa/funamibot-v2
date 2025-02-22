@@ -7,8 +7,7 @@ const s3 = require("../../../s3");
 module.exports = async (video, text, duration, dimensions) => {
   const command = new ffmpeg();
   command.input(video.url);
-  command.inputFormat(video.content_type.replace("video/", ""));
-  command.toFormat(video.content_type.replace("video/", ""));
+  command.toFormat("webm");
   command.outputOptions([
     "-movflags frag_keyframe+empty_moov",
     "-fs 4M",
@@ -29,7 +28,6 @@ module.exports = async (video, text, duration, dimensions) => {
       y: "20"
     }
   });
-  command.videoFilters('fade=in:0:5');
  
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
@@ -47,7 +45,7 @@ module.exports = async (video, text, duration, dimensions) => {
     }
   }
 
-  if(chanceFromInt(3)) {
+  if(chanceFromInt(0)) {
     const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
     command.input(replacementAudio);
     command.outputOptions("-map 1:a:0");

@@ -50,8 +50,8 @@ module.exports = {
       "required": false
     },
     {
-      "name": "messageid",
-      "description": "The messageid of a messsage containing a specific video",
+      "name": "url",
+      "description": "Direct URL of the video stream.",
       "type": Constants.ApplicationCommandOptionTypes.STRING
     },
     {
@@ -81,25 +81,10 @@ module.exports = {
     const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
     const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
 
-    if(getOptionValue(interaction.data.options, "messageid")) {
-      const messageID = [getOptionValue(interaction.data.options, "messageid")];
-
-      const message = await interaction.channel.getMessage(messageID)
-                                       .catch(() => {
-                                         console.log("Invalid message id entered.");
-                                       });
-
-      if(!message) {
-        interaction.createFollowup("That's not a valid message id. Enter a valid message id.")
-        return;
+    if(getOptionValue(interaction.data.options, "url")) {
+      const selectedVideo = {
+        url: getOptionValue(interaction.data.options, "url")
       }
-
-      const selectedVideo = getLatestVideo([message]);
-      if(!selectedVideo) {
-        interaction.createFollowup("Sorry, I couldn't find any valid video attachment in this message.")
-        return;
-      }
-
       const videoStream = await createVideo(selectedVideo, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
       const video = await getStreamAsBuffer(videoStream);
       interaction.createFollowup("", {name: "video.mp4", file: video});
