@@ -4,14 +4,13 @@ const ffmpegVideo = require("./video/filters");
 const chanceFromInt = require("../../../common/math/chanceFromInt");
 const s3 = require("../../../s3");
 
-module.exports = async (video, text, duration, dimensions) => {
+module.exports = async (video, text, duration, dimensions, hasAudio) => {
   const command = new ffmpeg();
   command.input(video.url);
   command.toFormat("webm");
   command.outputOptions([
     "-movflags frag_keyframe+empty_moov",
     "-fs 4M",
-    "-shortest",
     "-crf 51"
   ]);
   command.size(dimensions);
@@ -28,6 +27,13 @@ module.exports = async (video, text, duration, dimensions) => {
       y: "20"
     }
   });
+
+  if(duration === "N/A") {
+    duration = 5;
+    command.duration(duration);
+  } else {
+    command.outputOptions("-shortest")
+  }
  
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
@@ -45,7 +51,7 @@ module.exports = async (video, text, duration, dimensions) => {
     }
   }
 
-  if(chanceFromInt(3)) {
+  if(chanceFromInt(1) || !hasAudio) {
     const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
     command.input(replacementAudio);
     command.outputOptions("-map 1:a:0");
