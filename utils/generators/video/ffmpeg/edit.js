@@ -45,7 +45,7 @@ module.exports = async (video, text, duration, dimensions) => {
     }
   }
 
-  if(chanceFromInt(0)) {
+  if(chanceFromInt(3)) {
     const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
     command.input(replacementAudio);
     command.outputOptions("-map 1:a:0");
