@@ -3,6 +3,8 @@ module.exports = (attachments) => {
     for(let i = 0; i < attachments.length; i++) {
       if(attachments[i].content_type.startsWith("video") && attachments[i].size >= 1000 && attachments[i].content_type !== "video/quicktime") {
         return attachments[i];
+      } else if (attachments[i].content_type.startsWith("image") && attachments[i].size >= 100) {
+        return attachments[i];
       }
     }
   }

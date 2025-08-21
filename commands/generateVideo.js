@@ -110,7 +110,7 @@ module.exports = {
       });
       const randomVideo = getRandomVideo(channelMessages);
 
-      if(randomVideo.length === 0) {
+      if(!randomVideo) {
         interaction.createFollowup("Hey, there's no recent enough valid video's in this channel...");
         return;
       }
