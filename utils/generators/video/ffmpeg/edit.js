@@ -5,7 +5,7 @@ const chanceFromInt = require("../../../common/math/chanceFromInt");
 const s3 = require("../../../s3");
 
 module.exports = async (video, text, duration, dimensions, hasAudio) => {
-  const command = new ffmpeg();
+  const command = new ffmpeg({timeout:600});
   command.input(video.url);
   command.toFormat("webm");
   command.outputOptions([

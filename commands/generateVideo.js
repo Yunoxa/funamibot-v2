@@ -72,7 +72,10 @@ module.exports = {
       const videoStream = await createVideo(latestVideo, "");
 
       const video = await getStreamAsBuffer(videoStream);
-
+      if(video.length < 100) {
+        interaction.createFollowup("Error: Empty buffer output, something went wrong! Stupid baka programmer...");
+        return;
+      }
       interaction.createFollowup("", {name: "video.mp4", file: video});
       return;
     }
@@ -81,12 +84,21 @@ module.exports = {
     const preText = undefinedToEmptyString(getOptionValue(interaction.data.options, "pre-text"));
     const postText = undefinedToEmptyString(getOptionValue(interaction.data.options, "post-text"));
 
+    const text = `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`;
+
+    fullText = text.replace(/:|'|;/g, "");
+
+    console.log(fullText)
     if(getOptionValue(interaction.data.options, "url")) {
       const selectedVideo = {
         url: getOptionValue(interaction.data.options, "url")
       }
-      const videoStream = await createVideo(selectedVideo, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
+      const videoStream = await createVideo(selectedVideo, fullText);
       const video = await getStreamAsBuffer(videoStream);
+      if(video.length < 100) {
+        interaction.createFollowup("Error: Empty buffer output, something went wrong! Stupid baka programmer...");
+        return;
+      }
       interaction.createFollowup("", {name: "video.mp4", file: video});
       return;
     }
@@ -103,9 +115,13 @@ module.exports = {
         return;
       }
       console.log(randomVideo);
-      const videoStream = await createVideo(randomVideo, `${preText} ${undefinedToEmptyString(getSentence(textGen))} ${postText}`);
-
+      const videoStream = await createVideo(randomVideo, fullText);
+      console.log(videoStream)
       const video = await getStreamAsBuffer(videoStream);
+      if(video.length < 100) {
+        interaction.createFollowup("Error: Empty buffer output, something went wrong! Stupid baka programmer...");
+        return;
+      }
 
       interaction.createFollowup("", {name: "video.mp4", file: video});
       return;
@@ -122,8 +138,12 @@ module.exports = {
       return;
     }
 
-    const videoStream = await createVideo(latestVideo, `${preText} ${getSentence(textGen).toString()} ${postText}`);
+    const videoStream = await createVideo(latestVideo, fullText);
     const video = await getStreamAsBuffer(videoStream);
+    if(video.length < 100) {
+      interaction.createFollowup("Error: Empty buffer output, something went wrong! Stupid baka programmer...");
+      return;
+    }
     interaction.createFollowup("", {
       name: latestVideo.filename,
       file: video
