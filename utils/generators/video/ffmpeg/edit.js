@@ -34,7 +34,7 @@ module.exports = async (video, text, duration, dimensions, hasAudio) => {
   } else {
     command.outputOptions("-shortest")
   }
- 
+
   for (let key in ffmpegAudio) {
     if (chanceFromInt(Object.keys(ffmpegAudio).length)) {
       const parameters = ffmpegAudio[key](duration);
@@ -51,9 +51,15 @@ module.exports = async (video, text, duration, dimensions, hasAudio) => {
     }
   }
 
-  if(chanceFromInt(1) || !hasAudio) {
-    const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
-    command.input(replacementAudio);
+  if (chanceFromInt(2) || !hasAudio) {
+    if (chanceFromInt(2)) {
+      const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/music/")}`;
+      command.input(replacementAudio);
+    } else {
+      const replacementAudio = `https://funamibot.s3.eu-central-2.amazonaws.com/${await s3.getRandomS3Object("funamibot", "audio/SFX/")}`;
+      command.input(replacementAudio);
+    }
+
     command.outputOptions("-map 1:a:0");
     command.outputOptions("-map 0:v:0");
     command.inputOptions("-stream_loop -1");
